@@ -764,9 +764,9 @@ The completed system successfully demonstrates:
 
 A video demonstration of the completed LiPo Battery Tester is available below.
 
-**YouTube Demo:**
+[![LiPo Battery Tester Demo](https://img.youtube.com/vi/1_4A5m1DBYc/hqdefault.jpg)](https://youtu.be/1_4A5m1DBYc)
 
-[Watch the LiPo Battery Tester Demo](https://youtu.be/1_4A5m1DBYc?si=uCDnjJOFEn3sPK3V)
+**Click the image to watch the demonstration on YouTube.**
 
 ---
 

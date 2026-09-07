@@ -766,7 +766,7 @@ A video demonstration of the completed LiPo Battery Tester is available below.
 
 **YouTube Demo:**
 
-[Watch the LiPo Battery Tester Demo](https://youtube.com/shorts/0y8htSiJg7Q)
+[Watch the LiPo Battery Tester Demo]([https://youtube.com/shorts/0y8htSiJg7Q](https://youtu.be/1_4A5m1DBYc?si=uCDnjJOFEn3sPK3V))
 
 ---
 

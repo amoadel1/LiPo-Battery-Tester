@@ -1,20 +1,21 @@
 # LiPo Battery Tester
 
-![Platform](https://img.shields.io/badge/Platform-Maker%20UNO-blue)
+![Platform](https://img.shields.io/badge/Platform-Arduino-blue)
+![Controller](https://img.shields.io/badge/Controller-Cytron%20Maker%20UNO-red)
 ![ADC](https://img.shields.io/badge/ADC-TLA2528-green)
 ![Battery](https://img.shields.io/badge/Battery-1S%20%7C%202S%20%7C%203S-orange)
-![Display](https://img.shields.io/badge/Display-16x2%20I2C-yellow)
+![Display](https://img.shields.io/badge/Display-16x2%20I2C-blue)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 
-A standalone LiPo Battery Tester designed to measure and evaluate 1S, 2S, and 3S LiPo batteries.
+A LiPo battery tester designed to measure and evaluate 1S, 2S, and 3S LiPo batteries.
 
-The tester uses a Cytron Maker UNO as the main controller and a TLA2528 external ADC for accurate battery voltage measurement. The system measures individual cell voltages, total battery voltage, and the PACK voltage, then provides a PASS or FAIL result using an LCD, LED indicator, and buzzer.
+The tester measures individual cell voltages and PACK voltage using an external TLA2528 ADC controlled by a Cytron Maker UNO. The measured values are displayed on a 16x2 I2C LCD, with PASS/FAIL indication using an LED and buzzer.
 
 ---
 
 # Project Overview
 
-The LiPo Battery Tester was developed as an independent hardware and software project.
+This project was developed as a standalone LiPo Battery Tester.
 
 The system is designed to test:
 
@@ -22,35 +23,17 @@ The system is designed to test:
 - 2S LiPo batteries
 - 3S LiPo batteries
 
-The tester measures the cumulative voltage of the battery cells through an external TLA2528 ADC.
+The tester measures the voltage of each individual cell and also measures the total PACK voltage.
 
-For multi-cell batteries, the individual cell voltages are calculated from the cumulative measurements.
+The final result is determined from both the individual cell measurements and the PACK measurement.
 
-For example, for a 3S battery:
+If all required cells pass and the PACK voltage passes, the final result is:
 
-```text
-Cell 1 = CH0
+`PASS`
 
-Cell 2 = CH1 - CH0
+If any cell fails or the PACK voltage fails, the final result is:
 
-Cell 3 = CH2 - CH1
-```
-
-The PACK voltage is measured separately through a dedicated PACK connector.
-
-The final battery result is:
-
-```text
-PASS
-```
-
-only when all individual cells and the PACK voltage pass the programmed test conditions.
-
-If any cell or the PACK voltage fails, the final result is:
-
-```text
-FAIL
-```
+`FAIL`
 
 ---
 
@@ -60,50 +43,47 @@ FAIL
 - 2S LiPo battery testing
 - 3S LiPo battery testing
 - Individual cell voltage measurement
-- Total battery voltage measurement
-- Separate PACK voltage measurement
-- External TLA2528 12-bit ADC
-- I2C communication
+- PACK voltage measurement
+- External TLA2528 ADC
+- 12-bit ADC measurement
+- Voltage divider circuits
+- Calibration for voltage measurements
 - 16x2 I2C LCD
-- PASS indication
-- FAIL indication
+- Battery type selection
+- PASS/FAIL indication
 - LED status indication
 - Buzzer indication
 - Battery removal detection
-- Battery selection menu
 - Short press control
 - Long press control
 - Dedicated ON/OFF power switch
-- Voltage divider protection and scaling
-- Regulated power supply
+- Regulated 5V supply for the Maker UNO
+- Separate 3.3V supply for the TLA2528 ADC
 - Compact assembled enclosure
-- Dedicated battery connector holder
-- Dedicated PACK connector holder
-- Dedicated LCD holder
+- Physical mounting board for the complete tester
 
 ---
 
 # Hardware Components
 
-The main hardware components used in this project include:
+The main hardware components used in the project include:
 
 - Cytron Maker UNO
 - TLA2528 external ADC
 - 16x2 I2C LCD
-- Combined LED and push-button module
-- Buzzer
 - DC-DC voltage regulator
+- LED and push button module
+- Buzzer
 - ON/OFF power switch
 - 1S LiPo battery connector
 - 2S LiPo battery connector
 - 3S LiPo battery connector
-- Separate 2-wire PACK connector
-- Voltage divider resistor networks
-- Battery connector holder
-- LCD enclosure
-- Connecting wires
-- Terminal blocks and connectors
+- Separate PACK connector
+- Voltage divider resistors
 - LiPo batteries for testing
+- Mounting board
+- 3D-printed LCD enclosure
+- Connection wires and connectors
 
 ---
 
@@ -113,33 +93,21 @@ The complete tester was assembled on a mounting board.
 
 The main assembly includes the Maker UNO, TLA2528 ADC, voltage regulator, LCD enclosure, power switch, battery connectors, PACK connector, LED/button module, and wiring.
 
-![Complete Hardware Assembly](./images/complete_hardware_assembly.jpg)
+![Complete Hardware Assembly](./images/lipo_tester_assembly_top.jpg)
 
 **Figure 1.** Complete hardware assembly of the LiPo Battery Tester.
 
 ---
 
-# Maker UNO
+# Cytron Maker UNO
 
 The Cytron Maker UNO is used as the main controller of the tester.
 
-The Maker UNO handles:
+It controls the LCD, push button, LED, buzzer, and communicates with the TLA2528 ADC through the I2C interface.
 
-- User button input
-- LED control
-- Buzzer control
-- LCD communication
-- TLA2528 communication
-- Battery selection
-- Voltage calculations
-- PASS/FAIL evaluation
-- Battery removal detection
+The Maker UNO is powered from a regulated 5V supply.
 
-The Maker UNO is powered from a regulated:
-
-```text
-5V
-```
+![Maker UNO and Hardware](./images/lipo_tester_assembly_top.jpg)
 
 ---
 
@@ -151,17 +119,13 @@ A DC-DC voltage regulator is used to provide the required supply voltage.
 
 The regulator output was adjusted and verified at:
 
-```text
-5V
-```
+`5V`
 
-The regulated 5V supply is used to power the Maker UNO and the LCD.
+The regulated 5V supply is used to power the Maker UNO.
 
 The TLA2528 ADC is powered separately from:
 
-```text
-3.3V
-```
+`3.3V`
 
 A dedicated ON/OFF power switch is included in the main power circuit.
 
@@ -175,173 +139,101 @@ The ADC communicates with the Maker UNO using the I2C interface.
 
 The TLA2528 is powered from:
 
-```text
-3.3V
-```
+`3.3V`
 
 The ADC is configured to measure the voltage divider outputs connected to its analog input channels.
 
 The TLA2528 I2C address used in this project is:
 
-```text
-0x10
-```
-
-The TLA2528 provides 12-bit ADC measurements for the battery voltage sensing channels.
+`0x10`
 
 ---
 
 # LCD Display
 
-A 16x2 I2C LCD is used to display:
+A 16x2 I2C LCD is used to display the tester status, battery selection, measured cell voltages, PACK voltage, and final result.
 
-- Battery selection
-- Tester status
-- Individual cell voltages
-- PACK voltage
-- PASS result
-- FAIL result
+The LCD I2C address used in this project is:
 
-The LCD I2C address is:
+`0x27`
 
-```text
-0x27
-```
-
-The LCD is mounted inside a dedicated enclosure.
-
-![LCD Enclosure](./images/lcd_enclosure.jpg)
-
-**Figure 2.** LCD mounted in the dedicated tester enclosure.
+The LCD displays different screens depending on the current tester state.
 
 ---
 
 # LED and Push Button
 
-A combined LED and push-button module is used as the user interface.
+A combined LED and push button module is used for user control and status indication.
 
-The module has three wires:
+The module has three connections:
 
 - LED signal
 - Button signal
 - Common GND
 
-The current connections are:
+The connections used in the project are:
 
-| Component | Maker UNO Pin |
+| Function | Maker UNO Pin |
 |---|---|
 | LED | D4 |
 | Button | D7 |
-| Common | GND |
+| Buzzer | D8 |
 
-The LED provides the visual PASS/FAIL indication.
+The LED indicates the test result.
 
-The button is used to navigate the battery selection and start the test.
-
----
-
-# Buzzer
-
-The Maker UNO onboard buzzer is used for audible test indications.
-
-The buzzer is connected to:
-
-```text
-D8
-```
-
-The buzzer provides:
-
-- One beep for PASS
-- Three beeps for FAIL
-
-The FAIL indication produces three buzzer beeps once when the test result is generated.
+The button is used to select the battery type, start a test, and return to the previous screen using short and long presses.
 
 ---
 
 # Battery Connectors
 
-The tester supports three battery configurations:
+The tester supports 1S, 2S, and 3S LiPo batteries.
 
-```text
-1S
-2S
-3S
-```
+The battery connector wiring was combined into a common four-wire arrangement.
 
-The battery connectors were combined into a common four-wire arrangement for the cumulative cell measurements.
-
-The actual wire arrangement used in the assembled tester is:
+The final wire arrangement is:
 
 | Wire | Function |
 |---|---|
 | Black | GND / B- |
-| Red | S1 cumulative |
-| Blue | S2 cumulative |
-| Green | S3 cumulative / PACK+ |
+| Red | S1 cumulative voltage |
+| Blue | S2 cumulative voltage |
+| Green | S3 cumulative voltage / PACK+ |
 
-The cumulative measurements are connected to the TLA2528 ADC channels.
+For a 3S battery, the measured cumulative voltages are used to calculate the individual cell voltages.
+
+For example:
+
+`Cell 1 = S1`
+
+`Cell 2 = S2 - S1`
+
+`Cell 3 = S3 - S2`
 
 ---
 
-# ADC Channel Assignment
+# PACK Connector
 
-The TLA2528 channels are assigned as follows:
+A separate two-wire PACK connector is also included in the tester.
 
-| ADC Channel | Measurement |
+The PACK connector is used to measure the total battery voltage independently.
+
+The connections are:
+
+| PACK Connector | Function |
 |---|---|
-| CH0 | S1 cumulative voltage |
-| CH1 | S1 + S2 cumulative voltage |
-| CH2 | S1 + S2 + S3 cumulative voltage |
-| CH3 | Separate PACK connector |
+| PACK+ | Connected to CH3 voltage divider |
+| PACK- | GND |
 
-For a 3S battery:
-
-```text
-CH0 = Cell 1
-
-CH1 = Cell 1 + Cell 2
-
-CH2 = Cell 1 + Cell 2 + Cell 3
-
-CH3 = PACK voltage
-```
+The PACK voltage measurement is used as an additional check of the battery's total voltage.
 
 ---
 
-# Individual Cell Voltage Calculation
+# Voltage Divider Circuit
 
-The individual cell voltages are calculated from the cumulative measurements.
+Voltage divider circuits are used to reduce the battery voltage to a safe measurement range for the TLA2528 ADC.
 
-## Cell 1
-
-```text
-Cell 1 = CH0
-```
-
-## Cell 2
-
-```text
-Cell 2 = CH1 - CH0
-```
-
-## Cell 3
-
-```text
-Cell 3 = CH2 - CH1
-```
-
-The total battery voltage is obtained from the cumulative third-cell measurement for a 3S battery.
-
-The PACK voltage is measured separately through CH3.
-
----
-
-# Voltage Divider Configuration
-
-Voltage dividers are used to scale the battery voltages before they are applied to the TLA2528 ADC inputs.
-
-The voltage divider configuration used in the project is:
+The divider values used in the project are:
 
 | Channel | R1 | R2 | Divider Multiplier |
 |---|---:|---:|---:|
@@ -350,19 +242,58 @@ The voltage divider configuration used in the project is:
 | CH2 | 15kΩ | 3.9kΩ | 4.846154 |
 | CH3 | 15kΩ | 3.9kΩ | 4.846154 |
 
-The CH2 and CH3 divider multiplier is based on:
+The divider multiplier is calculated using:
 
-```text
-(15kΩ + 3.9kΩ) / 3.9kΩ
+`Multiplier = (R1 + R2) / R2`
 
-= 4.846154
-```
+For CH2 and CH3:
+
+`(15kΩ + 3.9kΩ) / 3.9kΩ = 4.846154`
 
 ---
 
-# Calibration
+# ADC Channels
 
-Calibration constants are included in the software to compensate for small measurement differences.
+The TLA2528 channels are used as follows:
+
+| ADC Channel | Measurement |
+|---|---|
+| CH0 | S1 cumulative voltage |
+| CH1 | S1 + S2 cumulative voltage |
+| CH2 | S1 + S2 + S3 cumulative voltage |
+| CH3 | PACK voltage |
+
+The individual cell voltages are calculated from the cumulative measurements.
+
+---
+
+# Cell Voltage Calculation
+
+For a 1S battery:
+
+`Cell 1 = CH0`
+
+For a 2S battery:
+
+`Cell 1 = CH0`
+
+`Cell 2 = CH1 - CH0`
+
+For a 3S battery:
+
+`Cell 1 = CH0`
+
+`Cell 2 = CH1 - CH0`
+
+`Cell 3 = CH2 - CH1`
+
+The PACK voltage is measured separately through CH3.
+
+---
+
+# ADC Calibration
+
+Calibration factors are included in the software to improve the voltage measurement accuracy.
 
 The calibration values used are:
 
@@ -373,212 +304,155 @@ The calibration values used are:
 | CH2 | 1.00988 |
 | CH3 | 1.00988 |
 
-These values are applied during the voltage calculation.
-
----
-
-# User Interface
-
-The tester uses a simple menu system.
-
-The user first selects the battery type.
-
-The selection screen displays:
-
-```text
-SELECT BATTERY
-> 2S
-```
-
-The available selections are:
-
-```text
-1S
-2S
-3S
-```
-
-The selection indicator blinks while the battery type is being selected.
-
-The selected battery type remains visible while the selection indicator changes.
+These values are applied to the measured ADC voltage before calculating the actual battery voltage.
 
 ---
 
 # Battery Selection
 
-The button is used to select the required battery type.
+When the tester is started, the battery selection screen allows the user to select:
 
-The selection sequence is:
+`1S`
 
-```text
-1S → 2S → 3S → 1S
-```
+`2S`
 
-A short press cycles through the available battery types.
+`3S`
 
-A long press confirms the selected battery type.
+The selected battery type remains visible while the selection indicator blinks.
 
-After confirmation, the tester displays the ready screen.
+![Battery Selection](./images/lipo_tester_battery_selection.jpg)
+
+**Figure 2.** Battery type selection screen.
+
+A short button press cycles through the available battery types.
+
+A long button press confirms the selected battery type.
 
 ---
 
 # Ready Screen
 
-After selecting the battery type, the tester displays:
+After selecting the battery type, the tester displays the ready screen.
 
-```text
-3S LiPo Tester
-Press to test >>
-```
+For example:
 
-The same format is used for 1S and 2S:
+`3S LiPo Tester`
 
-```text
-1S LiPo Tester
-Press to test >>
-```
+`Press to test >>`
 
-or:
+![3S Ready Screen](./images/lipo_tester_3s_ready.jpg)
 
-```text
-2S LiPo Tester
-Press to test >>
-```
+**Figure 3.** Ready screen before starting a 3S battery test.
 
-A short press starts the battery test.
+A short button press starts the battery test.
 
-A long press returns to the battery selection screen.
+A long button press returns to the battery selection screen.
 
 ---
 
 # Testing Process
 
-After the user presses the button to start the test, the Maker UNO reads the required TLA2528 ADC channels.
+The testing process is:
 
-The system then:
-
-1. Reads the ADC channels.
-2. Converts the ADC readings to voltage.
-3. Applies the voltage divider ratios.
-4. Applies the calibration factors.
-5. Calculates individual cell voltages.
-6. Calculates the total battery voltage.
-7. Reads the separate PACK voltage.
-8. Checks every individual cell.
-9. Checks the PACK voltage.
-10. Generates the final PASS or FAIL result.
-11. Controls the LED and buzzer according to the result.
-
----
-
-# 1S Battery Test
-
-For a 1S battery, the tester measures the first cell.
-
-The result screen displays the cell voltage and total voltage.
-
-Example:
-
-```text
-3.76
-3.76 V [PASS]
-```
+1. Turn ON the tester.
+2. Select the battery type.
+3. Confirm the battery type using a long button press.
+4. The tester displays the ready screen.
+5. Connect the LiPo battery.
+6. Press the button to start the test.
+7. The TLA2528 measures the battery voltage channels.
+8. The software calculates the individual cell voltages.
+9. The PACK voltage is measured.
+10. Each cell is checked against the defined limits.
+11. The PACK voltage is checked.
+12. The final PASS or FAIL result is displayed.
+13. The result remains on the LCD while the battery is connected.
+14. When the battery is removed, the tester returns to the ready screen.
 
 ---
 
-# 2S Battery Test
+# PASS / FAIL Logic
 
-For a 2S battery, the tester calculates:
+The final result depends on both the individual cells and the PACK voltage.
 
-```text
-Cell 1 = CH0
+The battery passes only when:
 
-Cell 2 = CH1 - CH0
-```
+- All required cells pass
+- PACK voltage passes
 
-The display shows both cell voltages and the total battery voltage.
+If any individual cell fails, the final result is:
 
-Example:
+`FAIL`
 
-```text
-3.56  3.76
-7.45V [FAIL]
-```
+If the PACK voltage fails, the final result is:
 
----
+`FAIL`
 
-# 3S Battery Test
+Only when all required measurements pass is the final result:
 
-For a 3S battery, the tester calculates:
-
-```text
-Cell 1 = CH0
-
-Cell 2 = CH1 - CH0
-
-Cell 3 = CH2 - CH1
-```
-
-The display shows all three individual cell voltages and the total battery voltage.
-
-Example:
-
-```text
-3.76  3.81  3.75
-11.54V [PASS]
-```
+`PASS`
 
 ---
 
-# PASS Condition
+# PASS Indication
 
-The battery receives a:
+When the battery passes:
 
-```text
-PASS
-```
+- The LED remains ON.
+- The buzzer beeps once.
+- The LCD displays `[PASS]`.
 
-result only when:
+Example 3S result:
 
-- All individual cells pass
-- The PACK voltage passes
+![3S PASS](./images/lipo_tester_3s_pass.jpg)
 
-The LED remains ON for a PASS result.
+**Figure 4.** Example of a successful 3S LiPo battery test.
 
-The buzzer produces one beep.
+Example 2S result:
 
-Example:
+![2S PASS 01](./images/lipo_tester_2s_pass_01.jpg)
 
-```text
-3.77  3.85  3.84
-11.53V [PASS]
-```
+**Figure 5.** Example of a successful 2S LiPo battery test.
+
+Another 2S PASS result:
+
+![2S PASS 02](./images/lipo_tester_2s_pass_02.jpg)
+
+**Figure 6.** Another 2S PASS measurement.
 
 ---
 
-# FAIL Condition
+# FAIL Indication
 
-The battery receives a:
+When the battery fails:
 
-```text
-FAIL
-```
+- The LED blinks continuously.
+- The buzzer sounds three times.
+- The LCD displays `[FAIL]`.
 
-result if:
+A battery can fail if one of the cells is outside the acceptable voltage range or if the PACK voltage does not pass.
 
-- Any individual cell fails
-- Or the PACK voltage fails
+![3S FAIL PACK](./images/lipo_tester_3s_fail_pack.jpg)
 
-The LED blinks continuously for a FAIL result.
+**Figure 7.** Example of a 3S battery test with a PACK-related failure.
 
-The buzzer sounds three times once when the FAIL result is generated.
+---
 
-Example:
+# CHG Result
 
-```text
-3.77  3.85  3.84
-11.15V [FAIL]
-```
+The tester can also display a `CHG` status during the testing process when the measured battery condition is not accepted as a normal PASS result.
+
+Example 2S CHG screen:
+
+![2S CHG](./images/lipo_tester_2s_chg.jpg)
+
+**Figure 8.** Example of the 2S CHG screen.
+
+Example 3S CHG screen:
+
+![3S CHG](./images/lipo_tester_3s_chg.jpg)
+
+**Figure 9.** Example of the 3S CHG screen.
 
 ---
 
@@ -586,262 +460,189 @@ Example:
 
 The tester includes automatic battery removal detection.
 
-After displaying the test result, the result screen remains stable while the battery is connected.
+After a test is completed, the result screen remains displayed while the battery is connected.
 
-When the battery is removed, the tester detects the removal and automatically returns to the ready screen.
+When the battery is removed, the tester automatically returns to the ready screen for the selected battery type.
 
-This allows the tester to be used repeatedly without manually resetting the system.
+![Ready Screen](./images/lipo_tester_ready_screen_01.jpg)
 
----
-
-# Long Press Function
-
-The button supports long-press operation.
-
-From the ready screen:
-
-```text
-Long Press → Return to Battery Selection
-```
-
-From the result screen:
-
-```text
-Long Press → Return to Battery Selection
-```
-
-A short press from the result screen does not change the result.
+**Figure 10.** Ready screen after battery removal.
 
 ---
 
-# Test Measurements
+# Button Operation
 
-The tester was physically tested using 1S, 2S, and 3S LiPo batteries.
+The button has different functions depending on the current screen.
 
-The measured values demonstrated that the system can successfully read individual cell voltages and total battery voltage.
+## Battery Selection Screen
 
----
+Short press:
 
-# 2S Battery Testing
+`1S → 2S → 3S`
 
-A 2S battery was tested and the tester produced results such as:
+Long press:
 
-```text
-3.88  3.94
-7.90V [PASS]
-```
+Confirm the selected battery type.
 
-Another 2S test produced:
+## Ready Screen
 
-```text
-3.95  4.01
-8.05V [PASS]
-```
+Short press:
 
-The measurements show that the tester can measure the two individual cells separately and calculate the total voltage.
+Start the battery test.
 
-![2S Battery Test](./images/2s_battery_test.jpg)
+Long press:
 
-**Figure 3.** 2S LiPo battery test result.
+Return to battery selection.
 
----
+## Result Screen
 
-# 3S Battery Testing
+Short press:
 
-A 3S LiPo battery was tested using the completed tester.
+No action.
 
-One successful measurement produced approximately:
+Long press:
 
-```text
-Cell 1 = 3.84V
-Cell 2 = 3.85V
-Cell 3 = 3.77V
-PACK   = 11.52V
-```
+Return to battery selection.
 
-The sum of the displayed cell voltages was:
+Battery removal:
 
-```text
-3.84 + 3.85 + 3.77 = 11.46V
-```
-
-The independently measured PACK voltage was approximately:
-
-```text
-11.52V
-```
-
-The difference was approximately:
-
-```text
-0.06V
-```
-
-The tester successfully generated a PASS result when all programmed conditions were satisfied.
-
-![3S Battery Test](./images/3s_battery_test.jpg)
-
-**Figure 4.** 3S LiPo battery test result.
+Automatically return to the ready screen.
 
 ---
 
-# Additional 3S Test
+# Buzzer Operation
 
-Another 3S battery measurement produced approximately:
+The onboard Maker UNO buzzer is connected to:
 
-```text
-Cell 1 = 3.78V
-Cell 2 = 3.79V
-Cell 3 = 3.75V
-```
+`D8`
 
-with a total voltage of approximately:
+The buzzer is used to indicate the test result.
 
-```text
-11.30V
-```
+PASS:
 
-The tester successfully displayed the three individual cell measurements and the total battery voltage.
+`1 beep`
 
-![3S Test Result](./images/3s_test_result.jpg)
+FAIL:
 
-**Figure 5.** Additional 3S battery test.
+`3 beeps`
+
+The buzzer provides an audible indication in addition to the LCD and LED status.
 
 ---
 
-# PASS and FAIL Verification
+# LED Status
 
-The PASS and FAIL functions were also tested.
+The external LED is connected to:
 
-The tester successfully displayed PASS when the required measurements were within the programmed conditions.
+`D4`
 
-The FAIL function was also verified by testing conditions where a cell or battery voltage did not satisfy the required limits.
+The LED indicates the current test result.
 
-The FAIL indication includes:
+PASS:
 
-```text
-LED blinking
-```
+`LED ON`
 
-and:
+FAIL:
 
-```text
-Three buzzer beeps
-```
+`LED blinking`
 
-The final result is based on both the cell measurements and the PACK measurement.
+The LED and buzzer provide a quick visual and audible indication of the battery condition.
+
+---
+
+# LCD Result Examples
+
+## 1S Battery
+
+Example display:
+
+`3.76`
+
+`3.76 V  [PASS]`
+
+The tester measures one cell and displays the cell voltage and final result.
+
+---
+
+## 2S Battery
+
+Example display:
+
+`3.56     3.76`
+
+`7.45V  [FAIL]`
+
+The two individual cell voltages are displayed on the first line and the total PACK voltage is displayed on the second line.
+
+---
+
+## 3S Battery
+
+Example display:
+
+`3.76  3.81  3.75`
+
+`11.54V      [PASS]`
+
+The three individual cell voltages are displayed on the first line and the PACK voltage and final result are displayed on the second line.
+
+---
+
+# Testing Results
+
+The completed tester was tested with real LiPo batteries.
+
+One of the successful 3S tests produced approximately:
+
+| Measurement | Voltage |
+|---|---:|
+| Cell 1 | 3.84 V |
+| Cell 2 | 3.85 V |
+| Cell 3 | 3.77 V |
+| PACK | 11.52 V |
+
+The tester correctly identified the battery as:
+
+`PASS`
+
+Another 3S measurement produced approximately:
+
+| Measurement | Voltage |
+|---|---:|
+| Cell 1 | 3.78 V |
+| Cell 2 | 3.79 V |
+| Cell 3 | 3.74 V |
+| PACK | 11.31 V |
+
+The tester also successfully tested 2S batteries and displayed individual cell voltages and total PACK voltage.
 
 ---
 
 # Hardware Assembly Process
 
-The complete physical assembly was carried out as part of the project development.
+The complete hardware assembly was completed on a mounting board.
 
-The main assembly work included:
+The assembly work included:
 
+- Installing the Maker UNO
+- Installing the TLA2528 ADC
 - Soldering the button wires
 - Soldering the voltage regulator wires
 - Installing the dedicated ON/OFF power switch
-- Connecting the power circuit
+- Connecting the main power circuit
 - Adjusting the regulator output to 5V
-- Verifying the regulated 5V output
-- Connecting the 5V supply to the Maker UNO
-- Mounting the Maker UNO and shield
-- Installing the TLA2528 ADC
-- Installing the LCD
-- Making a dedicated LCD holder
-- Making a dedicated PACK connector holder
+- Verifying the 5V output
+- Connecting the regulated 5V supply to the Maker UNO
+- Mounting the Maker UNO and shield on the holder
+- Preparing the LCD holder
+- Mounting the LCD enclosure
+- Preparing a dedicated PACK connector holder
 - Organizing the battery connector wiring
-- Connecting the battery sensing wires
+- Connecting the ADC wiring
 - Organizing the wiring using cable ties
 - Completing the main physical assembly
-- Testing the complete system with LiPo batteries
 
-![Hardware Assembly](./images/hardware_assembly.jpg)
-
-**Figure 6.** Hardware assembly and wiring of the tester.
-
----
-
-# Final Physical Design
-
-The final tester consists of the main electronics mounted on a wooden base together with the LCD enclosure, power switch, battery connectors, and control button.
-
-The LCD is mounted at the front for easy viewing.
-
-The large red button provides a simple user interface for selecting and testing batteries.
-
-The battery connectors are positioned on the side of the tester for convenient battery connection.
-
-![Final Tester](./images/final_tester.jpg)
-
-**Figure 7.** Final assembled LiPo Battery Tester.
-
----
-
-# System Block Diagram
-
-The overall system can be represented as:
-
-```text
-                LiPo Battery
-                     |
-          +----------+----------+
-          |                     |
-          | Cell Taps           | PACK Connector
-          |                     |
-          v                     v
-   Voltage Dividers          CH3 Divider
-          |                     |
-          +----------+----------+
-                     |
-                     v
-                TLA2528 ADC
-                  I2C
-                     |
-                     v
-                Maker UNO
-          +----------+----------+
-          |          |          |
-          v          v          v
-         LCD        LED       Buzzer
-          |
-          v
-      Test Result
-      PASS / FAIL
-```
-
----
-
-# Measurement System
-
-The measurement system uses the following structure:
-
-```text
-Battery
-   |
-   v
-Voltage Divider
-   |
-   v
-TLA2528 ADC
-   |
-   | I2C
-   v
-Maker UNO
-   |
-   +----> Voltage Calculation
-   |
-   +----> Cell Calculation
-   |
-   +----> PASS / FAIL Evaluation
-   |
-   +----> LCD
-   |
-   +----> LED
-   |
-   +----> Buzzer
-```
+The final assembly provides a compact and organized platform for testing LiPo batteries.
 
 ---
 
@@ -849,11 +650,25 @@ Maker UNO
 
 The tester was programmed using the Arduino IDE.
 
-The main program file is:
+The main software functions include:
 
-```text
-LiPo_battery_tester.ino
-```
+- TLA2528 ADC communication
+- I2C communication
+- LCD control
+- Battery type selection
+- Button short-press detection
+- Button long-press detection
+- Voltage measurement
+- Voltage divider calculation
+- Calibration
+- Individual cell voltage calculation
+- PACK voltage measurement
+- PASS/FAIL evaluation
+- LED control
+- Buzzer control
+- Battery removal detection
+- Ready screen control
+- Result screen control
 
 The complete Arduino source code is available in the `code` folder.
 
@@ -861,169 +676,97 @@ The complete Arduino source code is available in the `code` folder.
 
 [LiPo_battery_tester.ino](./code/LiPo_battery_tester.ino)
 
----
-
-# Software Structure
-
-The software is responsible for:
-
-- Initializing the Maker UNO
-- Initializing I2C
-- Initializing the TLA2528
-- Initializing the LCD
-- Configuring the LED
-- Configuring the button
-- Configuring the buzzer
-- Displaying the battery selection menu
-- Handling short presses
-- Handling long presses
-- Starting the battery test
-- Reading ADC channels
-- Converting ADC readings into voltages
-- Applying divider ratios
-- Applying calibration factors
-- Calculating individual cells
-- Reading PACK voltage
-- Checking the battery condition
-- Displaying PASS or FAIL
-- Controlling the LED
-- Controlling the buzzer
-- Detecting battery removal
-- Returning to the ready screen
 
 ---
 
-# Important I2C Addresses
+# System Block Diagram
 
-The I2C addresses used in this project are:
-
-| Device | I2C Address |
-|---|---|
-| TLA2528 ADC | `0x10` |
-| 16x2 LCD | `0x27` |
-
-The TLA2528 address `0x10` belongs specifically to this LiPo Battery Tester project.
-
----
-
-# Main Pin Configuration
-
-The main control pins used by the project are:
-
-| Function | Maker UNO Pin |
-|---|---|
-| LED | D4 |
-| Button | D7 |
-| Buzzer | D8 |
-| I2C SDA | SDA / A4 |
-| I2C SCL | SCL / A5 |
-
-The TLA2528 communicates through the I2C interface.
+    LiPo Battery
+          │
+          ├──────────────► Voltage Divider ──► TLA2528 CH0
+          │
+          ├──────────────► Voltage Divider ──► TLA2528 CH1
+          │
+          ├──────────────► Voltage Divider ──► TLA2528 CH2
+          │
+          └──────────────► PACK Voltage Divider ──► TLA2528 CH3
+                                                    │
+                                                    │ I2C
+                                                    ▼
+                                             Cytron Maker UNO
+                                                    │
+                           ┌────────────────────────┼──────────────────────┐
+                           │                        │                      │
+                           ▼                        ▼                      ▼
+                         LCD                    LED/Button              Buzzer
+                      16x2 I2C                    D4 / D7                  D8
 
 ---
 
-# Battery Measurement Channels
+# System Operation
 
-| Channel | Function |
-|---|---|
-| CH0 | S1 cumulative voltage |
-| CH1 | S1 + S2 cumulative voltage |
-| CH2 | S1 + S2 + S3 cumulative voltage |
-| CH3 | Separate PACK voltage |
+The complete system operates as follows:
 
----
+    LiPo Battery
+          │
+          ▼
+    Voltage Divider
+          │
+          ▼
+    TLA2528 ADC
+          │
+          │ I2C
+          ▼
+    Cytron Maker UNO
+          │
+          ├────────► LCD Display
+          │
+          ├────────► LED
+          │
+          └────────► Buzzer
 
-# Power Configuration
+The battery voltage is first reduced using voltage divider circuits.
 
-The power configuration is:
+The TLA2528 measures the divided voltages.
 
-```text
-DC Input
-   |
-   v
-ON/OFF Switch
-   |
-   v
-DC-DC Regulator
-   |
-   +----> 5V ----> Maker UNO
-   |
-   +----> 5V ----> LCD
+The Maker UNO receives the ADC measurements through I2C and calculates the actual cell and PACK voltages.
 
-Separate 3.3V Supply
-   |
-   v
-TLA2528 ADC
-```
+The calculated values are displayed on the LCD.
 
-The TLA2528 must be powered from 3.3V in this project.
+The tester then evaluates the battery and provides a PASS or FAIL indication.
 
 ---
 
-# Safety
 
-LiPo batteries can deliver high currents and must be handled carefully.
+# Project Status
 
-Before connecting a battery:
+The LiPo Battery Tester hardware and software were successfully assembled, programmed, and tested.
 
-- Verify the battery connector wiring.
-- Verify the polarity.
-- Verify the common GND connection.
-- Check for accidental short circuits.
-- Confirm that the voltage divider wiring is correct.
-- Confirm that the TLA2528 supply is 3.3V.
-- Do not connect a damaged battery.
-- Do not continue testing if abnormal heating, smoke, sparks, or unusual behavior occurs.
+The completed system successfully demonstrates:
 
-The battery should only be connected after the tester wiring has been verified.
-
----
-
-# Project Testing
-
-The completed tester was tested with different battery configurations.
-
-The testing confirmed:
-
-- Correct battery selection
-- Correct 1S operation
-- Correct 2S operation
-- Correct 3S operation
-- Individual cell voltage calculation
-- Total voltage measurement
+- 1S battery testing
+- 2S battery testing
+- 3S battery testing
+- Individual cell voltage measurement
 - PACK voltage measurement
-- LCD display operation
-- LED operation
-- Buzzer operation
-- PASS indication
-- FAIL indication
+- LCD display
+- Battery selection
+- PASS/FAIL evaluation
+- LED indication
+- Buzzer indication
 - Battery removal detection
-- Long press navigation
-- Stable result display
+- Short and long button control
+- Complete physical hardware assembly
 
 ---
 
-# Final Result
+# Project Demonstration
 
-The LiPo Battery Tester was successfully assembled, programmed, and tested.
-
-The final system can identify the selected battery configuration, measure the required cell voltages, measure the PACK voltage, calculate individual cell voltages, and provide a PASS or FAIL result.
-
-The completed hardware includes the Maker UNO, TLA2528 ADC, LCD, LED/button module, buzzer, regulated power supply, battery connectors, PACK connector, and dedicated enclosure.
-
-The project successfully demonstrates a complete standalone LiPo battery testing system.
-
----
-
----
-
-# Demonstration
-
-A demonstration video can be added here:
+A video demonstration of the completed LiPo Battery Tester is available below.
 
 **YouTube Demo:**
 
-[Add YouTube Demo Link Here](#)
+[Watch the LiPo Battery Tester Demo](https://youtube.com/shorts/0y8htSiJg7Q)
 
 ---
 

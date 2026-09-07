@@ -107,7 +107,7 @@ It controls the LCD, push button, LED, buzzer, and communicates with the TLA2528
 
 The Maker UNO is powered from a regulated 5V supply.
 
-![Maker UNO and Hardware](./images/lipo_tester_assembly_top.jpg)
+![Maker UNO and Hardware](./images/maker_uno.jpg)
 
 ---
 
